@@ -178,18 +178,20 @@ function App() {
           <p style={{ color:"#fbbf24", fontSize:"11px", margin:0, fontStyle:"italic" }}>For educational purposes only — not medical advice</p>
         </div>
 
-        <section aria-labelledby="week-heading" style={{ marginBottom:"24px" }}>
-            <h2 id="week-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px"
-              const sel = selectedWeek===w.id;
-              return <button key={w.id} role="radio" aria-checked={sel} onClick={() => setSelectedWeek(w.id)}
-                style={{ padding:"10px 12px", borderRadius:"10px", border:`2px solid ${sel?w.color:"rgba(255,255,255,0.1)"}`, background:sel?`${w.color}22`:"rgba(255,255,255,0.03)", color:sel?w.color:"rgba(255,255,255,0.7)", cursor:"pointer", textAlign:"left", outline:"none" }}
-                {...focusRing(`${w.color}88`)}>
-                <div style={{ fontWeight:"700", fontSize:"12px" }}>{w.label}</div>
-                {w.sub && <div style={{ fontSize:"10px", opacity:0.75, marginTop:"2px" }}>{w.sub}</div>}
-              </button>;
-            })}
-          </div>
-        </section>
+    <section aria-labelledby="week-heading" style={{ marginBottom:"24px" }}>
+  <h2 id="week-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Select Bug</h2>
+  <div role="radiogroup" aria-labelledby="week-heading" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6px" }}>
+    {WEEKS.map(w => {
+      const sel = selectedWeek===w.id;
+      return <button key={w.id} role="radio" aria-checked={sel} onClick={() => setSelectedWeek(w.id)}
+        style={{ padding:"10px 12px", borderRadius:"10px", border:`2px solid ${sel?w.color:"rgba(255,255,255,0.1)"}`, background:sel?`${w.color}22`:"rgba(255,255,255,0.03)", color:sel?w.color:"rgba(255,255,255,0.7)", cursor:"pointer", textAlign:"left", outline:"none" }}
+        {...focusRing(`${w.color}88`)}>
+        <div style={{ fontWeight:"700", fontSize:"12px" }}>{w.label}</div>
+        {w.sub && <div style={{ fontSize:"10px", opacity:0.75, marginTop:"2px" }}>{w.sub}</div>}
+      </button>;
+    })}
+  </div>
+</section>
 
         <section aria-labelledby="qtype-heading" style={{ marginBottom:"24px" }}>
           <h2 id="qtype-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Session Type</h2>
