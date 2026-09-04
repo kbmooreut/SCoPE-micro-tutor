@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="SCOPE Microbiology Socratic Tutor — Step 1 level, educational use only." />
+  <meta name="description" content="SCoPE Microbiology Socratic Tutor — MS1 level, educational use only." />
   <title>SCoPE Microbiology</title>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body, #root { height: 100%; }
@@ -23,34 +23,30 @@
   <div id="root"></div>
 <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-
 const SYSTEM_PROMPT = `You are a Socratic Microbiology Tutor for first-year medical students (MS1 level, first 6 weeks of medical school). This tutor is for EDUCATION ONLY — not medical advice. Keep questions simple, clear, and foundational. Avoid complex clinical reasoning — focus on recognition, basic mechanisms, and distinguishing features.
 
 BUG LIST (you may ONLY use these organisms):
- 
+
 ADENOVIRIDAE:
 - Adenovirus: dsDNA, linear, naked icosahedral capsid, replicates in nucleus; transmission: droplets, feces, fomites; infects epithelium of respiratory tract and eyes, spreads to lymphoid tissue, viral protein blocks interferon and cytotoxic T cells; clinical: conjunctivitis (pink eye), URI (rhinitis, sore throat, cough), pneumonia, gastroenteritis with watery diarrhea, hepatitis, hemorrhagic cystitis, myocarditis; ID: PCR; treatment: self-limited; live oral vaccines for military
- 
+
 HERPESVIRIDAE:
 - Epstein-Barr virus (EBV): enveloped, dsDNA, linear, icosahedral capsid; transmission: saliva (kissing disease), blood/sexual contact, organ transplant; infects B cells via CD21 receptor; latent infection with viral proteins promoting B-cell proliferation; clinical: infectious mononucleosis, oral hairy leukoplakia (HIV/AIDS), Burkitt lymphoma, Hodgkin lymphoma, nasopharyngeal carcinoma, CNS lymphomas (HIV/AIDS), lymphoproliferative disease in transplant patients; ID: heterophile antibody (Monospot), EBV-specific antibodies (VCA IgM/IgG, EBNA), PCR in immunocompromised; treatment: supportive for mono; treat associated malignancy; PEARL: atypical lymphocytes (activated cytotoxic T-cells), posterior cervical lymphadenopathy; amoxicillin/ampicillin can trigger maculopapular rash
- 
+
 CORONAVIRIDAE:
 - Coronaviruses (SARS-CoV, SARS-CoV-2, MERS-CoV): ssRNA, positive-sense, linear, enveloped, helical capsid; transmission: respiratory droplets; SARS-CoV/SARS-CoV-2 bind ACE2 receptor; MERS-CoV binds DPP4 receptor; spike protein mediates receptor binding and is target of most vaccines; clinical: common cold, SARS, COVID-19 (severe pneumonia), MERS; ID: PCR, rapid antigen testing; treatment: supportive; antivirals (remdesivir, nirmatrelvir/ritonavir) and vaccines for SARS-CoV-2; dexamethasone, baricitinib, tocilizumab for severe COVID-19
- 
+
 ORTHOMYXOVIRIDAE:
-- Influenza A, B, C: ssRNA, negative-sense, linear, multisegmented, enveloped, helical capsid, replicates in nucleus; transmission: respiratory droplets; hemagglutinin (HA) binds sialic acid receptors → fusion and adsorption; neuraminidase (NA) cleaves sialic acid → allows viral spread through mucus and release of new virions; clinical: influenza, URI, viral pneumonia, Reye syndrome (children + aspirin), secondary bacterial pneumonias (Staph, Strep); ID: rapid antigen test, PCR; treatment: oseltamivir, zanamivir, baloxavir (NA inhibitors); amantadine/rimantadine; annual inactivated or live attenuated vaccine; PEARL: antigenic drift (small HA/NA mutations → flu epidemics); antigenic shift (major HA/NA changes in Influenza A, including from animals → pandemics)
- 
+- Influenza A, B, C: ssRNA, negative-sense, linear, multisegmented, enveloped, helical capsid, replicates in nucleus; transmission: respiratory droplets; hemagglutinin (HA) binds sialic acid receptors; neuraminidase (NA) cleaves sialic acid allowing viral spread; clinical: influenza, URI, viral pneumonia, Reye syndrome (children + aspirin), secondary bacterial pneumonias (Staph, Strep); ID: rapid antigen test, PCR; treatment: oseltamivir, zanamivir, baloxavir; annual vaccine; PEARL: antigenic drift (small mutations, flu epidemics); antigenic shift (major changes in Influenza A, pandemics)
+
 PARAMYXOVIRIDAE:
-- Measles (Rubeola): ssRNA, negative-sense, linear, enveloped, helical capsid; transmission: respiratory droplets (highly contagious); hemagglutinin glycoprotein, F-protein, immunosuppression via lymphocyte infection; clinical: high fever, cough, rhinitis, conjunctivitis, Koplik spots (pathognomonic), descending maculopapular rash; complications: pneumonia, acute encephalitis, subacute sclerosing panencephalitis (SSPE), giant cell pneumonia in immunosuppressed; ID: serology (IgM), PCR; treatment: supportive; MMR vaccine for prevention; vitamin A in developing countries
- 
-- Human Metapneumovirus: ssRNA, negative-sense, linear, enveloped, helical capsid; transmission: respiratory droplets; F-protein causes syncytia formation (similar to RSV); integrin alpha-V-beta receptor allows infection of respiratory epithelium; clinical: bronchiolitis, pneumonia, URI especially in young children and elderly; ID: PCR; treatment: supportive; PEARL: clinically similar to RSV; identified relatively recently
- 
-- Parainfluenza virus: ssRNA, negative-sense, linear, enveloped, helical capsid; transmission: respiratory droplets; glycoproteins with HA and NA activity; F-protein causes syncytia formation; clinical: croup (barking cough, inspiratory stridor due to laryngeal swelling/narrowing), otitis media, bronchiolitis, pneumonia; ID: PCR; treatment: supportive; nebulized epinephrine and corticosteroids for croup; PEARL: most common cause of croup in children
- 
-- Rhinovirus: ssRNA, positive-sense, linear, naked icosahedral capsid; transmission: respiratory droplets, fomites; binds ICAM-1 receptor on respiratory epithelium; acid-labile (does not survive GI tract); clinical: common cold; ID: clinical diagnosis, PCR; treatment: supportive; PEARL: most common cause of the common cold; >100 serotypes
- 
+- Measles (Rubeola): ssRNA, negative-sense, linear, enveloped, helical capsid; transmission: respiratory droplets (highly contagious); clinical: high fever, cough, rhinitis, conjunctivitis, Koplik spots (pathognomonic), descending maculopapular rash; complications: pneumonia, encephalitis, SSPE; ID: serology (IgM), PCR; treatment: supportive; MMR vaccine; vitamin A in developing countries
+- Human Metapneumovirus: ssRNA, negative-sense, linear, enveloped, helical capsid; transmission: respiratory droplets; F-protein causes syncytia (similar to RSV); clinical: bronchiolitis, pneumonia, URI in young children and elderly; ID: PCR; treatment: supportive; PEARL: clinically similar to RSV
+- Parainfluenza virus: ssRNA, negative-sense, linear, enveloped, helical capsid; transmission: respiratory droplets; F-protein causes syncytia; clinical: croup (barking cough, inspiratory stridor), otitis media, bronchiolitis, pneumonia; ID: PCR; treatment: supportive; nebulized epinephrine and corticosteroids for croup; PEARL: most common cause of croup in children
+- Rhinovirus: ssRNA, positive-sense, linear, naked icosahedral capsid; transmission: respiratory droplets, fomites; binds ICAM-1 receptor; acid-labile (does not survive GI tract); clinical: common cold; ID: clinical diagnosis, PCR; treatment: supportive; PEARL: most common cause of common cold; more than 100 serotypes
+
 PNEUMOVIRIDAE:
-- Respiratory Syncytial Virus (RSV): ssRNA, negative-sense, linear, enveloped, helical capsid; transmission: respiratory droplets, fomites; fusion (F) protein causes respiratory epithelial cells to form multinucleated giant cells (syncytia); NO hemagglutinin or neuraminidase; clinical: bronchiolitis (especially infants), URI, viral pneumonia in elderly, otitis media; ID: rapid antigen test, PCR; treatment: supportive; palivizumab (monoclonal antibody) for high-risk infant prophylaxis; RSV vaccines for older adults and maternal immunization; ribavirin; PEARL: most common cause of bronchiolitis and pneumonia in infants <1 year old
+- Respiratory Syncytial Virus (RSV): ssRNA, negative-sense, linear, enveloped, helical capsid; transmission: respiratory droplets, fomites; fusion (F) protein causes syncytia; NO hemagglutinin or neuraminidase; clinical: bronchiolitis (especially infants), URI, viral pneumonia in elderly, otitis media; ID: rapid antigen test, PCR; treatment: supportive; palivizumab for high-risk infant prophylaxis; RSV vaccines for older adults; PEARL: most common cause of bronchiolitis and pneumonia in infants under 1 year old
 
 RULES:
 1. ONLY use organisms from the bug list above.
@@ -60,39 +56,38 @@ RULES:
 5. Ask ONE question at a time.
 6. Never say "wrong" — say "Let's think through that" or "What do you remember about how this bug spreads?"
 7. When correct: reinforce briefly and ask a follow-up to deepen understanding.
-8. Detect frustration → give a helpful hint or simplify the question.
-9. Do NOT lecture. Always: Question → Student reasoning → Next question.
+8. Detect frustration — give a helpful hint or simplify the question.
+9. Do NOT lecture. Always: Question, then student reasoning, then next question.
 10. Avoid complex multi-step clinical reasoning — keep it foundational and approachable.
 11. When asked for progress summary: topics covered, performance estimate, recommendations.`;
-
-
-const WEEKS = [
-  { id:"all", label:"All Topics", color:"#6366f1" },
-  { id:"1", label:"Analgesics", sub:"Acetaminophen / NSAIDs", color:"#ef4444" },
-  { id:"2", label:"Decongestants", sub:"Pseudoephedrine / Oxymetazoline", color:"#f97316" },
-  { id:"3", label:"Antihistamines", sub:"Diphenhydramine / Chlorpheniramine", color:"#eab308" },
-  { id:"4", label:"Antitussives", sub:"Dextromethorphan", color:"#22c55e" },
-  { id:"5", label:"Corticosteroids", sub:"Dexamethasone", color:"#14b8a6" },
-  { id:"6", label:"Antivirals", sub:"Influenza / COVID / RSV", color:"#8b5cf6" },
+  const WEEKS = [
+  { id:"all", label:"All Bugs", color:"#6366f1" },
+  { id:"1", label:"Adenovirus", sub:"dsDNA / Naked", color:"#ef4444" },
+  { id:"2", label:"EBV", sub:"Herpesvirus", color:"#f97316" },
+  { id:"3", label:"Coronaviruses", sub:"COVID / SARS / MERS", color:"#eab308" },
+  { id:"4", label:"Influenza", sub:"Antigenic Drift/Shift", color:"#22c55e" },
+  { id:"5", label:"Measles", sub:"Paramyxovirus", color:"#14b8a6" },
+  { id:"6", label:"hMPV & PIV", sub:"Syncytia / Croup", color:"#3b82f6" },
+  { id:"7", label:"Rhinovirus", sub:"Common Cold", color:"#8b5cf6" },
+  { id:"8", label:"RSV", sub:"Bronchiolitis", color:"#ec4899" },
 ];
 
 const QUESTION_TYPES = [
   { id:"socratic", label:"🎯 Ask Me a Question", desc:"Practice applying your knowledge" },
-  { id:"mcq", label:"📋 Clinical Vignettes", desc:"NBME-style 5-option questions" },
-  { id:"short", label:"⚡ Concept Challenges", desc:"Quick-fire mechanism & reasoning" },
-  { id:"case", label:"🏥 Full Clinical Case", desc:"Full patient scenario walkthrough" },
+  { id:"short", label:"⚡ Concept Challenges", desc:"Quick-fire mechanism and recognition" },
+  { id:"compare", label:"🔬 Compare Bugs", desc:"Spot the differences between organisms" },
+  { id:"case", label:"🏥 Clinical Scenario", desc:"Simple patient presentation walkthrough" },
 ];
 
 const TOPIC_PROMPTS = [
-  { icon:"💊", label:"Drug Name", msg:"Ask me a question about a specific drug from my selected week." },
-  { icon:"🏷️", label:"Drug Class", msg:"Ask me a question about a drug class from my selected week." },
-  { icon:"🦠", label:"Disease / Condition", msg:"Give me a question starting from a disease or clinical condition and ask me to reason through drug selection." },
-  { icon:"⚠️", label:"Adverse Effects", msg:"Ask me a question focused on adverse effects — why a drug causes a specific side effect based on its mechanism." },
-  { icon:"⚙️", label:"Mechanism of Action", msg:"Ask me a question specifically about mechanism of action." },
-  { icon:"🎲", label:"Surprise Me", msg:"Pick any topic from my selected week and ask me a question — your choice." },
+  { icon:"🦠", label:"Bug ID", msg:"Ask me to identify a bug based on its features." },
+  { icon:"📡", label:"Transmission", msg:"Ask me a question about how a bug spreads." },
+  { icon:"⚙️", label:"Mechanism", msg:"Ask me a question about how this bug causes disease." },
+  { icon:"🩺", label:"Clinical Features", msg:"Give me a simple clinical scenario and ask me to identify the bug." },
+  { icon:"💊", label:"Treatment", msg:"Ask me about treatment or prevention for a bug." },
+  { icon:"🎲", label:"Surprise Me", msg:"Pick any bug and ask me any question — your choice." },
 ];
-
-function App() {
+  function App() {
   const [screen, setScreen] = useState("home");
   const [selectedWeek, setSelectedWeek] = useState(null);
   const [selectedQType, setSelectedQType] = useState(null);
@@ -105,7 +100,6 @@ function App() {
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, loading]);
 
-  // Calls Netlify function — API key stays safe on the server
   const callAPI = async (userMessage, history) => {
     const msgs = [
       ...history.map(m => ({ role:m.role, content:m.content })),
@@ -124,15 +118,15 @@ function App() {
   const startSession = async () => {
     setScreen("chat");
     setLoading(true);
-    const weekInfo = WEEKS.find(w => w.id === selectedWeek);
-   const weekLabel = selectedWeek==="all" ? "all bugs" : `${weekInfo?.label} (${weekInfo?.sub})`;
+    const bugInfo = WEEKS.find(w => w.id === selectedWeek);
+    const bugLabel = selectedWeek==="all" ? "all bugs" : `${bugInfo?.label} (${bugInfo?.sub})`;
     const qtLabel = QUESTION_TYPES.find(q => q.id===selectedQType)?.label || "";
-    const initMsg = `Student selected: Select bug: ${weekLabel}, Question type: ${qtLabel}, Difficulty: ${difficulty}. Greet them warmly, confirm selections briefly, and begin immediately.`;
+    const initMsg = `Student selected: Bug focus: ${bugLabel}, Question type: ${qtLabel}, Difficulty: ${difficulty}. Greet them warmly, confirm selections briefly, and begin immediately with a simple foundational question appropriate for an early MS1 student.`;
     try {
       const reply = await callAPI(initMsg, []);
       setMessages([{ role:"assistant", content:reply }]);
     } catch(e) {
-      setMessages([{ role:"assistant", content:"⚠️ Could not connect. Please check your Netlify function and API key." }]);
+      setMessages([{ role:"assistant", content:"Could not connect. Please check your Netlify function and API key." }]);
     }
     setLoading(false);
     setTimeout(() => inputRef.current?.focus(), 100);
@@ -148,7 +142,7 @@ function App() {
       const reply = await callAPI(text, messages);
       setMessages([...newHistory, { role:"assistant", content:reply }]);
     } catch(e) {
-      setMessages([...newHistory, { role:"assistant", content:"⚠️ Something went wrong. Please try again." }]);
+      setMessages([...newHistory, { role:"assistant", content:"Something went wrong. Please try again." }]);
     }
     setLoading(false);
     setTimeout(() => inputRef.current?.focus(), 100);
@@ -159,39 +153,38 @@ function App() {
   const reset = () => { setScreen("home"); setSelectedWeek(null); setSelectedQType(null); setDifficulty(null); setMessages([]); setInput(""); };
 
   const canStart = selectedWeek && selectedQType && difficulty;
-  const currentWeek = WEEKS.find(w => w.id===selectedWeek);
-  const weekColor = currentWeek?.color || "#6366f1";
+  const currentBug = WEEKS.find(w => w.id===selectedWeek);
+  const bugColor = currentBug?.color || "#6366f1";
   const showTopicPrompts = selectedQType==="socratic" && messages.length>=1 && messages.length<=5 && !loading;
 
   const focusRing = (color="rgba(255,255,255,0.5)") => ({
     onFocus: e => { e.currentTarget.style.boxShadow=`0 0 0 3px ${color}`; },
     onBlur:  e => { e.currentTarget.style.boxShadow="none"; }
   });
-
-  if (screen==="home") return (
+      if (screen==="home") return (
     <div role="main" style={{ minHeight:"100vh", background:"linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#0f172a 100%)", display:"flex", alignItems:"center", justifyContent:"center", padding:"24px" }}>
       <div style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.09)", borderRadius:"24px", padding:"40px 36px", maxWidth:"580px", width:"100%" }}>
         <div style={{ textAlign:"center", marginBottom:"32px" }}>
-          <div aria-hidden="true" style={{ fontSize:"46px", marginBottom:"10px" }}>💊</div>
-          <h1 style={{ color:"#fff", fontSize:"22px", fontWeight:"700", margin:"0 0 4px 0" }}>SCOPE Pharmacology</h1>
-          <p style={{ color:"rgba(255,255,255,0.45)", fontSize:"12px", margin:"0 0 6px 0" }}>Socratic Tutor · Step 1 Level</p>
+          <div aria-hidden="true" style={{ fontSize:"46px", marginBottom:"10px" }}>🦠</div>
+          <h1 style={{ color:"#fff", fontSize:"22px", fontWeight:"700", margin:"0 0 4px 0" }}>SCoPE Microbiology</h1>
+          <p style={{ color:"rgba(255,255,255,0.45)", fontSize:"12px", margin:"0 0 6px 0" }}>Socratic Tutor · MS1 Level</p>
           <p style={{ color:"#fbbf24", fontSize:"11px", margin:0, fontStyle:"italic" }}>For educational purposes only — not medical advice</p>
         </div>
 
-    <section aria-labelledby="week-heading" style={{ marginBottom:"24px" }}>
-  <h2 id="week-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Select Bug</h2>
-  <div role="radiogroup" aria-labelledby="week-heading" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6px" }}>
-    {WEEKS.map(w => {
-      const sel = selectedWeek===w.id;
-      return <button key={w.id} role="radio" aria-checked={sel} onClick={() => setSelectedWeek(w.id)}
-        style={{ padding:"10px 12px", borderRadius:"10px", border:`2px solid ${sel?w.color:"rgba(255,255,255,0.1)"}`, background:sel?`${w.color}22`:"rgba(255,255,255,0.03)", color:sel?w.color:"rgba(255,255,255,0.7)", cursor:"pointer", textAlign:"left", outline:"none" }}
-        {...focusRing(`${w.color}88`)}>
-        <div style={{ fontWeight:"700", fontSize:"12px" }}>{w.label}</div>
-        {w.sub && <div style={{ fontSize:"10px", opacity:0.75, marginTop:"2px" }}>{w.sub}</div>}
-      </button>;
-    })}
-  </div>
-</section>
+        <section aria-labelledby="bug-heading" style={{ marginBottom:"24px" }}>
+          <h2 id="bug-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Select Bug</h2>
+          <div role="radiogroup" aria-labelledby="bug-heading" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6px" }}>
+            {WEEKS.map(w => {
+              const sel = selectedWeek===w.id;
+              return <button key={w.id} role="radio" aria-checked={sel} onClick={() => setSelectedWeek(w.id)}
+                style={{ padding:"10px 12px", borderRadius:"10px", border:`2px solid ${sel?w.color:"rgba(255,255,255,0.1)"}`, background:sel?`${w.color}22`:"rgba(255,255,255,0.03)", color:sel?w.color:"rgba(255,255,255,0.7)", cursor:"pointer", textAlign:"left", outline:"none" }}
+                {...focusRing(`${w.color}88`)}>
+                <div style={{ fontWeight:"700", fontSize:"12px" }}>{w.label}</div>
+                {w.sub && <div style={{ fontSize:"10px", opacity:0.75, marginTop:"2px" }}>{w.sub}</div>}
+              </button>;
+            })}
+          </div>
+        </section>
 
         <section aria-labelledby="qtype-heading" style={{ marginBottom:"24px" }}>
           <h2 id="qtype-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Session Type</h2>
@@ -228,17 +221,16 @@ function App() {
       </div>
     </div>
   );
-
-  return (
+      return (
     <div style={{ height:"100vh", display:"flex", flexDirection:"column", background:"#0f172a" }}>
       <header style={{ padding:"10px 16px", background:"rgba(255,255,255,0.03)", borderBottom:"1px solid rgba(255,255,255,0.08)", display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>
         <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
-          <span aria-hidden="true" style={{ fontSize:"20px" }}>💊</span>
+          <span aria-hidden="true" style={{ fontSize:"20px" }}>🦠</span>
           <div>
-            <div style={{ color:"#fff", fontWeight:"700", fontSize:"13px" }}>SCOPE Pharmacology</div>
+            <div style={{ color:"#fff", fontWeight:"700", fontSize:"13px" }}>SCoPE Microbiology</div>
             <div style={{ display:"flex", gap:"5px", marginTop:"3px", flexWrap:"wrap" }}>
               {[
-                { label:`${currentWeek?.label}${currentWeek?.sub?" · "+currentWeek.sub:""}`, bg:`${weekColor}22`, color:weekColor, border:`1px solid ${weekColor}50` },
+                { label:`${currentBug?.label}${currentBug?.sub?" · "+currentBug.sub:""}`, bg:`${bugColor}22`, color:bugColor, border:`1px solid ${bugColor}50` },
                 { label:QUESTION_TYPES.find(q=>q.id===selectedQType)?.label, bg:"rgba(99,102,241,0.18)", color:"#a5b4fc", border:"1px solid rgba(99,102,241,0.35)" },
                 { label:difficulty, bg:"rgba(34,197,94,0.14)", color:"#86efac", border:"1px solid rgba(34,197,94,0.3)" },
               ].map((b,i) => <span key={i} style={{ background:b.bg, color:b.color, fontSize:"10px", padding:"1px 8px", borderRadius:"20px", border:b.border, fontWeight:"600" }}>{b.label}</span>)}
@@ -258,7 +250,7 @@ function App() {
       <main id="chat-main" aria-live="polite" aria-label="Conversation" style={{ flex:1, overflowY:"auto", padding:"16px", display:"flex", flexDirection:"column", gap:"14px" }}>
         {messages.map((m,i) => (
           <div key={i} style={{ display:"flex", justifyContent:m.role==="user"?"flex-end":"flex-start", alignItems:"flex-start", gap:"8px" }}>
-            {m.role==="assistant" && <div aria-hidden="true" style={{ width:"30px", height:"30px", background:"linear-gradient(135deg,#3b82f6,#8b5cf6)", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px", flexShrink:0, marginTop:"2px" }}>💊</div>}
+            {m.role==="assistant" && <div aria-hidden="true" style={{ width:"30px", height:"30px", background:"linear-gradient(135deg,#3b82f6,#8b5cf6)", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px", flexShrink:0, marginTop:"2px" }}>🦠</div>}
             <div aria-label={m.role==="assistant"?"Tutor message":"Your message"}
               style={{ maxWidth:"78%", padding:"12px 15px", borderRadius:m.role==="user"?"16px 16px 4px 16px":"16px 16px 16px 4px", background:m.role==="user"?"linear-gradient(135deg,#3b82f6,#8b5cf6)":"rgba(255,255,255,0.07)", border:m.role==="assistant"?"1px solid rgba(255,255,255,0.1)":"none", color:"#fff", fontSize:"14px", lineHeight:"1.7", whiteSpace:"pre-wrap" }}>
               {m.content}
@@ -267,7 +259,7 @@ function App() {
         ))}
         {loading && (
           <div role="status" aria-label="Tutor is typing" style={{ display:"flex", alignItems:"flex-start", gap:"8px" }}>
-            <div aria-hidden="true" style={{ width:"30px", height:"30px", background:"linear-gradient(135deg,#3b82f6,#8b5cf6)", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px" }}>💊</div>
+            <div aria-hidden="true" style={{ width:"30px", height:"30px", background:"linear-gradient(135deg,#3b82f6,#8b5cf6)", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px" }}>🦠</div>
             <div style={{ padding:"12px 16px", background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:"16px 16px 16px 4px", display:"flex", gap:"5px", alignItems:"center" }}>
               {[0,1,2].map(j => <div key={j} aria-hidden="true" style={{ width:"6px", height:"6px", background:"#93c5fd", borderRadius:"50%", animation:`pulse 1.2s ease-in-out ${j*0.2}s infinite` }} />)}
             </div>
@@ -275,8 +267,7 @@ function App() {
         )}
         <div ref={bottomRef} />
       </main>
-
-      {showTopicPrompts && (
+            {showTopicPrompts && (
         <section aria-labelledby="prompt-hint" style={{ padding:"0 16px 10px", flexShrink:0 }}>
           <p id="prompt-hint" style={{ color:"rgba(255,255,255,0.4)", fontSize:"10px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.8px", margin:"0 0 7px 0" }}>Ask me about…</p>
           <div role="group" aria-labelledby="prompt-hint" style={{ display:"flex", gap:"6px", flexWrap:"wrap" }}>
