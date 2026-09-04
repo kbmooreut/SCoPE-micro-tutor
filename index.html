@@ -179,8 +179,7 @@ function App() {
         </div>
 
         <section aria-labelledby="week-heading" style={{ marginBottom:"24px" }}>
-            <h2 id="week-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Select Bug</h2>, fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Select const initMsg = `Student selected: Bug selected: ${weekLabel}...
-            {WEEKS.map(w => {
+            <h2 id="week-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px"
               const sel = selectedWeek===w.id;
               return <button key={w.id} role="radio" aria-checked={sel} onClick={() => setSelectedWeek(w.id)}
                 style={{ padding:"10px 12px", borderRadius:"10px", border:`2px solid ${sel?w.color:"rgba(255,255,255,0.1)"}`, background:sel?`${w.color}22`:"rgba(255,255,255,0.03)", color:sel?w.color:"rgba(255,255,255,0.7)", cursor:"pointer", textAlign:"left", outline:"none" }}
