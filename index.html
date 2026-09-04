@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SCOPE Pharmacology Socratic Tutor — Step 1 level, educational use only." />
+  <title>SCOPE Pharmacology</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #fff; -webkit-font-smoothing: antialiased; }
+    @keyframes pulse { 0%,80%,100%{opacity:0.3;transform:scale(0.8);} 40%{opacity:1;transform:scale(1);} }
+    textarea::placeholder { color: rgba(255,255,255,0.28); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+const SYSTEM_PROMPT = `You are a Socratic Pharmacology Tutor for medical students (MS1 level, beginning of medical schoo level). This tutor is for EDUCATION ONLY — not medical advice.
+
+COURSE DRUG LIST (you may ONLY use these drugs):
+
+ANALGESICS / ANTIPYRETICS:
+- Acetaminophen: inhibits COX-2 in CNS → ↓prostaglandin synthesis → ↓pain sensation and ↓hypothalamic thermoregulatory set-point; pain, fever; SE: acute liver failure with overdose (metabolites deplete glutathione, form toxic byproducts); antidote: N-acetylcysteine (regenerates glutathione)
+- Ibuprofen/Naproxen: NSAIDs, reversibly inhibit COX-1 and COX-2 → ↓conversion of arachidonic acid to prostaglandins; pain, inflammation, fever; SE: dyspepsia, gastric ulcers, GI bleeding, headache, fluid retention, hypertension, nephrotoxicity
+
+NASAL DECONGESTANTS:
+- Pseudoephedrine: oral alpha-1 adrenergic receptor agonist; nasal congestion; SE: hypertension, insomnia, headache
+- Oxymetazoline (intranasal): topical alpha-1 adrenergic receptor agonist; nasal congestion; SE: rebound nasal congestion with repeat use (avoid more than 3-5 days)
+
+ANTIHISTAMINES:
+- Diphenhydramine/Chlorpheniramine: first-generation reversible histamine H1 receptor antagonists; allergic reactions, nausea, vertigo, motion sickness, sleep aid; SE: anticholinergic effects (sedation, xerostomia, urinary retention, constipation, confusion)
+
+ANTITUSSIVES:
+- Dextromethorphan: synthetic codeine analog, blocks NMDA glutamate receptors → suppresses cough reflex; cough (especially due to common cold); SE: sedation, dizziness, GI upset, confusion, serotonin syndrome
+
+CORTICOSTEROIDS:
+- Dexamethasone: binds glucocorticoid receptor in cytoplasm → moves into nucleus → downregulates transcription of inflammatory mediators (histamine, prostaglandins, leukotrienes, cytokines); croup, viral pneumonia, COVID-19, ARDS; SE: short-term usually well-tolerated; long-term: hyperglycemia, weight gain, insomnia, mood changes, immunosuppression, osteoporosis, myopathy, thin skin, easy bruising, impaired wound healing, hypertension, cataracts, Cushing syndrome, HPA axis suppression
+
+ANTIVIRALS — INFLUENZA:
+- Oseltamivir: inhibits influenza neuraminidase → reduces cleavage of virion particles from sialic acid residues on host cell membrane → prevents spread of virus; influenza; SE: nausea and vomiting; NOTE: likely has little or no effect on mortality and hospital admission; likely increases risk of adverse events
+- Baloxavir: inhibits "cap snatching" (transfer of 5′ cap from cell mRNA onto viral mRNA) — endonuclease activity of influenza virus RNA polymerase → ↓viral replication; influenza; SE: diarrhea, nausea, headache; single oral dose; likely reduces time to alleviation of symptoms by ~1 day
+
+ANTIVIRALS — COVID-19:
+- Remdesivir: adenosine nucleotide analog incorporated into viral RNA strand → inhibits RNA-dependent RNA polymerase; high-risk outpatient COVID-19 and hospitalized patients requiring oxygen; SE: hepatotoxicity (elevated AST/ALT), infusion reaction, nausea; NOTE: benefit minimal in critically ill patients and healthy young patients with mild COVID; originally developed for Ebola
+- Nirmatrelvir-ritonavir (Paxlovid): nirmatrelvir inhibits viral protease → prevents cleavage of polyproteins into functional proteins; ritonavir inhibits CYP3A4 → boosts nirmatrelvir levels; mild-to-moderate COVID-19 with increased risk of progression (age >65, immunocompromised); SE: dysgeusia, diarrhea, nausea, headache, hepatotoxicity, CYP3A4 drug interactions, COVID-19 rebound symptoms; NOTE: benefit minimal in vaccinated patients
+
+ANTIVIRALS — RSV:
+- Palivizumab: monoclonal antibody that binds F-protein in RSV → prevents fusion and syncytium formation; prophylaxis against RSV in high-risk patients (premature infants and infants <2 with chronic lung disease); SE: injection site reaction, fever, rash, rare hypersensitivity
+
+RULES:
+1. ONLY use drugs from the course list above.
+2. NEVER give answers directly — always guide with Socratic questions first.
+3. Give answer ONLY IF student has attempted AND explicitly requests it.
+4. Ask ONE question at a time.
+5. Never say "wrong" — say "Let's think through that" or "Can you connect that to the mechanism?"
+6. When correct: reinforce and deepen with follow-up questions.
+7. Detect frustration → scaffold to simpler sub-questions.
+8. Do NOT lecture. Always: Question → Student reasoning → Next question.
+9. NBME MCQ rules: 5 options (A-E), clinical vignette, single lead-in, plausible distractors.
+10. When asked for progress summary: topics covered, performance estimate, recommendations.`;
+
+
+const WEEKS = [
+  { id:"all", label:"All Topics", color:"#6366f1" },
+  { id:"1", label:"Analgesics", sub:"Acetaminophen / NSAIDs", color:"#ef4444" },
+  { id:"2", label:"Decongestants", sub:"Pseudoephedrine / Oxymetazoline", color:"#f97316" },
+  { id:"3", label:"Antihistamines", sub:"Diphenhydramine / Chlorpheniramine", color:"#eab308" },
+  { id:"4", label:"Antitussives", sub:"Dextromethorphan", color:"#22c55e" },
+  { id:"5", label:"Corticosteroids", sub:"Dexamethasone", color:"#14b8a6" },
+  { id:"6", label:"Antivirals", sub:"Influenza / COVID / RSV", color:"#8b5cf6" },
+];
+
+const QUESTION_TYPES = [
+  { id:"socratic", label:"🎯 Ask Me a Question", desc:"Practice applying your knowledge" },
+  { id:"mcq", label:"📋 Clinical Vignettes", desc:"NBME-style 5-option questions" },
+  { id:"short", label:"⚡ Concept Challenges", desc:"Quick-fire mechanism & reasoning" },
+  { id:"case", label:"🏥 Full Clinical Case", desc:"Full patient scenario walkthrough" },
+];
+
+const TOPIC_PROMPTS = [
+  { icon:"💊", label:"Drug Name", msg:"Ask me a question about a specific drug from my selected week." },
+  { icon:"🏷️", label:"Drug Class", msg:"Ask me a question about a drug class from my selected week." },
+  { icon:"🦠", label:"Disease / Condition", msg:"Give me a question starting from a disease or clinical condition and ask me to reason through drug selection." },
+  { icon:"⚠️", label:"Adverse Effects", msg:"Ask me a question focused on adverse effects — why a drug causes a specific side effect based on its mechanism." },
+  { icon:"⚙️", label:"Mechanism of Action", msg:"Ask me a question specifically about mechanism of action." },
+  { icon:"🎲", label:"Surprise Me", msg:"Pick any topic from my selected week and ask me a question — your choice." },
+];
+
+function App() {
+  const [screen, setScreen] = useState("home");
+  const [selectedWeek, setSelectedWeek] = useState(null);
+  const [selectedQType, setSelectedQType] = useState(null);
+  const [difficulty, setDifficulty] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, loading]);
+
+  // Calls Netlify function — API key stays safe on the server
+  const callAPI = async (userMessage, history) => {
+    const msgs = [
+      ...history.map(m => ({ role:m.role, content:m.content })),
+      { role:"user", content:userMessage }
+    ];
+    const res = await fetch("/.netlify/functions/chat", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ system: SYSTEM_PROMPT, messages: msgs })
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const data = await res.json();
+    return data.content?.[0]?.text || "Something went wrong. Please try again.";
+  };
+
+  const startSession = async () => {
+    setScreen("chat");
+    setLoading(true);
+    const weekInfo = WEEKS.find(w => w.id === selectedWeek);
+    const weekLabel = selectedWeek==="all" ? "all topics" : `${weekInfo?.label} (${weekInfo?.sub})`; 
+    const qtLabel = QUESTION_TYPES.find(q => q.id===selectedQType)?.label || "";
+    const initMsg = `Student selected: Week focus: ${weekLabel}, Question type: ${qtLabel}, Difficulty: ${difficulty}. Greet them warmly, confirm selections briefly, and begin immediately.`;
+    try {
+      const reply = await callAPI(initMsg, []);
+      setMessages([{ role:"assistant", content:reply }]);
+    } catch(e) {
+      setMessages([{ role:"assistant", content:"⚠️ Could not connect. Please check your Netlify function and API key." }]);
+    }
+    setLoading(false);
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
+
+  const sendMessageWith = async (text) => {
+    if (!text.trim() || loading) return;
+    setInput("");
+    const newHistory = [...messages, { role:"user", content:text }];
+    setMessages(newHistory);
+    setLoading(true);
+    try {
+      const reply = await callAPI(text, messages);
+      setMessages([...newHistory, { role:"assistant", content:reply }]);
+    } catch(e) {
+      setMessages([...newHistory, { role:"assistant", content:"⚠️ Something went wrong. Please try again." }]);
+    }
+    setLoading(false);
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
+
+  const sendMessage = () => { if (input.trim()) sendMessageWith(input.trim()); };
+  const requestProgress = () => sendMessageWith("Please give me a progress summary of this session — topics covered, estimated performance, and what I should review.");
+  const reset = () => { setScreen("home"); setSelectedWeek(null); setSelectedQType(null); setDifficulty(null); setMessages([]); setInput(""); };
+
+  const canStart = selectedWeek && selectedQType && difficulty;
+  const currentWeek = WEEKS.find(w => w.id===selectedWeek);
+  const weekColor = currentWeek?.color || "#6366f1";
+  const showTopicPrompts = selectedQType==="socratic" && messages.length>=1 && messages.length<=5 && !loading;
+
+  const focusRing = (color="rgba(255,255,255,0.5)") => ({
+    onFocus: e => { e.currentTarget.style.boxShadow=`0 0 0 3px ${color}`; },
+    onBlur:  e => { e.currentTarget.style.boxShadow="none"; }
+  });
+
+  if (screen==="home") return (
+    <div role="main" style={{ minHeight:"100vh", background:"linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#0f172a 100%)", display:"flex", alignItems:"center", justifyContent:"center", padding:"24px" }}>
+      <div style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.09)", borderRadius:"24px", padding:"40px 36px", maxWidth:"580px", width:"100%" }}>
+        <div style={{ textAlign:"center", marginBottom:"32px" }}>
+          <div aria-hidden="true" style={{ fontSize:"46px", marginBottom:"10px" }}>💊</div>
+          <h1 style={{ color:"#fff", fontSize:"22px", fontWeight:"700", margin:"0 0 4px 0" }}>SCOPE Pharmacology</h1>
+          <p style={{ color:"rgba(255,255,255,0.45)", fontSize:"12px", margin:"0 0 6px 0" }}>Socratic Tutor · Step 1 Level</p>
+          <p style={{ color:"#fbbf24", fontSize:"11px", margin:0, fontStyle:"italic" }}>For educational purposes only — not medical advice</p>
+        </div>
+
+        <section aria-labelledby="week-heading" style={{ marginBottom:"24px" }}>
+          <h2 id="week-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Select Week Focus</h2>
+          <div role="radiogroup" aria-labelledby="week-heading" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6px" }}>
+            {WEEKS.map(w => {
+              const sel = selectedWeek===w.id;
+              return <button key={w.id} role="radio" aria-checked={sel} onClick={() => setSelectedWeek(w.id)}
+                style={{ padding:"10px 12px", borderRadius:"10px", border:`2px solid ${sel?w.color:"rgba(255,255,255,0.1)"}`, background:sel?`${w.color}22`:"rgba(255,255,255,0.03)", color:sel?w.color:"rgba(255,255,255,0.7)", cursor:"pointer", textAlign:"left", outline:"none" }}
+                {...focusRing(`${w.color}88`)}>
+                <div style={{ fontWeight:"700", fontSize:"12px" }}>{w.label}</div>
+                {w.sub && <div style={{ fontSize:"10px", opacity:0.75, marginTop:"2px" }}>{w.sub}</div>}
+              </button>;
+            })}
+          </div>
+        </section>
+
+        <section aria-labelledby="qtype-heading" style={{ marginBottom:"24px" }}>
+          <h2 id="qtype-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Session Type</h2>
+          <div role="radiogroup" aria-labelledby="qtype-heading" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6px" }}>
+            {QUESTION_TYPES.map(q => {
+              const sel = selectedQType===q.id;
+              return <button key={q.id} role="radio" aria-checked={sel} onClick={() => setSelectedQType(q.id)}
+                style={{ padding:"10px 12px", borderRadius:"10px", border:`2px solid ${sel?"#818cf8":"rgba(255,255,255,0.1)"}`, background:sel?"rgba(99,102,241,0.18)":"rgba(255,255,255,0.03)", color:sel?"#c7d2fe":"rgba(255,255,255,0.7)", cursor:"pointer", textAlign:"left", outline:"none" }}
+                {...focusRing("rgba(99,102,241,0.6)")}>
+                <div style={{ fontWeight:"700", fontSize:"12px" }}>{q.label}</div>
+                <div style={{ fontSize:"10px", opacity:0.75, marginTop:"2px" }}>{q.desc}</div>
+              </button>;
+            })}
+          </div>
+        </section>
+
+        <section aria-labelledby="diff-heading" style={{ marginBottom:"28px" }}>
+          <h2 id="diff-heading" style={{ color:"rgba(255,255,255,0.55)", fontSize:"11px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"1px", margin:"0 0 10px 0" }}>Difficulty</h2>
+          <div role="radiogroup" aria-labelledby="diff-heading" style={{ display:"flex", gap:"8px" }}>
+            {["Beginner","Intermediate","Advanced"].map(d => {
+              const sel = difficulty===d;
+              return <button key={d} role="radio" aria-checked={sel} onClick={() => setDifficulty(d)}
+                style={{ flex:1, padding:"10px", borderRadius:"10px", border:`2px solid ${sel?"#4ade80":"rgba(255,255,255,0.1)"}`, background:sel?"rgba(34,197,94,0.14)":"rgba(255,255,255,0.03)", color:sel?"#86efac":"rgba(255,255,255,0.7)", cursor:"pointer", fontSize:"13px", fontWeight:"700", outline:"none" }}
+                {...focusRing("rgba(74,222,128,0.5)")}>{d}</button>;
+            })}
+          </div>
+        </section>
+
+        <button onClick={canStart?startSession:undefined} disabled={!canStart} aria-disabled={!canStart}
+          style={{ width:"100%", padding:"15px", background:canStart?"linear-gradient(135deg,#3b82f6,#8b5cf6)":"rgba(255,255,255,0.07)", color:canStart?"#fff":"rgba(255,255,255,0.3)", border:"2px solid transparent", borderRadius:"12px", fontSize:"15px", fontWeight:"700", cursor:canStart?"pointer":"not-allowed", outline:"none" }}
+          {...focusRing("rgba(139,92,246,0.6)")}>
+          {canStart ? "Begin Session →" : "Select all options above to begin"}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ height:"100vh", display:"flex", flexDirection:"column", background:"#0f172a" }}>
+      <header style={{ padding:"10px 16px", background:"rgba(255,255,255,0.03)", borderBottom:"1px solid rgba(255,255,255,0.08)", display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
+          <span aria-hidden="true" style={{ fontSize:"20px" }}>💊</span>
+          <div>
+            <div style={{ color:"#fff", fontWeight:"700", fontSize:"13px" }}>SCOPE Pharmacology</div>
+            <div style={{ display:"flex", gap:"5px", marginTop:"3px", flexWrap:"wrap" }}>
+              {[
+                { label:`${currentWeek?.label}${currentWeek?.sub?" · "+currentWeek.sub:""}`, bg:`${weekColor}22`, color:weekColor, border:`1px solid ${weekColor}50` },
+                { label:QUESTION_TYPES.find(q=>q.id===selectedQType)?.label, bg:"rgba(99,102,241,0.18)", color:"#a5b4fc", border:"1px solid rgba(99,102,241,0.35)" },
+                { label:difficulty, bg:"rgba(34,197,94,0.14)", color:"#86efac", border:"1px solid rgba(34,197,94,0.3)" },
+              ].map((b,i) => <span key={i} style={{ background:b.bg, color:b.color, fontSize:"10px", padding:"1px 8px", borderRadius:"20px", border:b.border, fontWeight:"600" }}>{b.label}</span>)}
+            </div>
+          </div>
+        </div>
+        <nav aria-label="Session controls" style={{ display:"flex", gap:"6px" }}>
+          <button onClick={requestProgress} disabled={messages.length<2||loading}
+            style={{ background:"rgba(255,255,255,0.07)", color:"rgba(255,255,255,0.85)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:"8px", padding:"6px 11px", fontSize:"11px", fontWeight:"600", cursor:messages.length<2?"not-allowed":"pointer", opacity:messages.length<2?0.4:1, outline:"none" }}
+            {...focusRing()}>📊 Progress</button>
+          <button onClick={reset}
+            style={{ background:"rgba(255,255,255,0.07)", color:"rgba(255,255,255,0.85)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:"8px", padding:"6px 11px", fontSize:"11px", fontWeight:"600", cursor:"pointer", outline:"none" }}
+            {...focusRing()}>↩ Restart</button>
+        </nav>
+      </header>
+
+      <main id="chat-main" aria-live="polite" aria-label="Conversation" style={{ flex:1, overflowY:"auto", padding:"16px", display:"flex", flexDirection:"column", gap:"14px" }}>
+        {messages.map((m,i) => (
+          <div key={i} style={{ display:"flex", justifyContent:m.role==="user"?"flex-end":"flex-start", alignItems:"flex-start", gap:"8px" }}>
+            {m.role==="assistant" && <div aria-hidden="true" style={{ width:"30px", height:"30px", background:"linear-gradient(135deg,#3b82f6,#8b5cf6)", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px", flexShrink:0, marginTop:"2px" }}>💊</div>}
+            <div aria-label={m.role==="assistant"?"Tutor message":"Your message"}
+              style={{ maxWidth:"78%", padding:"12px 15px", borderRadius:m.role==="user"?"16px 16px 4px 16px":"16px 16px 16px 4px", background:m.role==="user"?"linear-gradient(135deg,#3b82f6,#8b5cf6)":"rgba(255,255,255,0.07)", border:m.role==="assistant"?"1px solid rgba(255,255,255,0.1)":"none", color:"#fff", fontSize:"14px", lineHeight:"1.7", whiteSpace:"pre-wrap" }}>
+              {m.content}
+            </div>
+          </div>
+        ))}
+        {loading && (
+          <div role="status" aria-label="Tutor is typing" style={{ display:"flex", alignItems:"flex-start", gap:"8px" }}>
+            <div aria-hidden="true" style={{ width:"30px", height:"30px", background:"linear-gradient(135deg,#3b82f6,#8b5cf6)", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px" }}>💊</div>
+            <div style={{ padding:"12px 16px", background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:"16px 16px 16px 4px", display:"flex", gap:"5px", alignItems:"center" }}>
+              {[0,1,2].map(j => <div key={j} aria-hidden="true" style={{ width:"6px", height:"6px", background:"#93c5fd", borderRadius:"50%", animation:`pulse 1.2s ease-in-out ${j*0.2}s infinite` }} />)}
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </main>
+
+      {showTopicPrompts && (
+        <section aria-labelledby="prompt-hint" style={{ padding:"0 16px 10px", flexShrink:0 }}>
+          <p id="prompt-hint" style={{ color:"rgba(255,255,255,0.4)", fontSize:"10px", fontWeight:"700", textTransform:"uppercase", letterSpacing:"0.8px", margin:"0 0 7px 0" }}>Ask me about…</p>
+          <div role="group" aria-labelledby="prompt-hint" style={{ display:"flex", gap:"6px", flexWrap:"wrap" }}>
+            {TOPIC_PROMPTS.map(opt => (
+              <button key={opt.label} onClick={() => sendMessageWith(opt.msg)}
+                style={{ display:"flex", alignItems:"center", gap:"5px", background:"rgba(99,179,237,0.08)", color:"#90cdf4", border:"1px solid rgba(99,179,237,0.22)", borderRadius:"20px", padding:"6px 13px", fontSize:"12px", fontWeight:"600", cursor:"pointer", outline:"none" }}
+                onMouseOver={e => { e.currentTarget.style.background="rgba(99,179,237,0.18)"; }}
+                onMouseOut={e  => { e.currentTarget.style.background="rgba(99,179,237,0.08)"; }}
+                {...focusRing("rgba(99,179,237,0.5)")}>
+                <span aria-hidden="true">{opt.icon}</span>{opt.label}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div style={{ padding:"10px 16px 14px", borderTop:"1px solid rgba(255,255,255,0.08)", display:"flex", gap:"8px", alignItems:"flex-end", flexShrink:0 }}>
+        <label htmlFor="chat-input" style={{ position:"absolute", width:"1px", height:"1px", overflow:"hidden", clip:"rect(0,0,0,0)", whiteSpace:"nowrap" }}>Your response</label>
+        <textarea id="chat-input" ref={inputRef} value={input} rows={1}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();} }}
+          onFocus={e => { e.currentTarget.style.borderColor="rgba(99,179,237,0.6)"; }}
+          onBlur={e  => { e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"; }}
+          placeholder="Type your answer or question… (Enter to send, Shift+Enter for new line)"
+          aria-label="Your response to the tutor"
+          style={{ flex:1, background:"rgba(255,255,255,0.06)", border:"2px solid rgba(255,255,255,0.12)", borderRadius:"12px", padding:"11px 14px", color:"#fff", fontSize:"14px", resize:"none", outline:"none", fontFamily:"inherit", lineHeight:"1.5", maxHeight:"120px", overflowY:"auto" }}
+        />
+        <button onClick={sendMessage} disabled={loading||!input.trim()} aria-label="Send message"
+          style={{ width:"44px", height:"44px", background:input.trim()&&!loading?"linear-gradient(135deg,#3b82f6,#8b5cf6)":"rgba(255,255,255,0.07)", border:"2px solid transparent", borderRadius:"12px", color:"#fff", fontSize:"18px", cursor:input.trim()&&!loading?"pointer":"not-allowed", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, outline:"none" }}
+          {...focusRing("rgba(139,92,246,0.6)")}>↑</button>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
